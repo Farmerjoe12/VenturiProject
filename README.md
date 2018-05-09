@@ -40,6 +40,7 @@ Please do not try and sue me because your pump stopped as a result of your negli
 
 # Contact Info
 
-You can write me on GitHub if you want, be aware that I may or may not see it. Discord is the most reliable contact method of choice, so shoot me a dm.
+You can write me on GitHub if you want, be aware that I may or may not see it. Discord is the most reliable contact method of choice, so shoot me a dm. You can also reach me on reddit, if you like that sort of thing.
 
 Discord: Farmerjoe#6151
+Reddit: Farmerjoe1996
