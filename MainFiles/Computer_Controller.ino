@@ -8,6 +8,9 @@
  * independent fan control. Builiding on top of the fan controller, I added in LED strip support,  
  * as well as a water pump for a liquid cooling system, which functions almost identical to the fans.
  * 
+ * The function setPwmFrequency() is required to allow for the most generic implementation of fan control
+ * for any PWM enabled device. See this link for more info: https://playground.arduino.cc/Code/PwmFrequency
+ * 
  * This sketch includes functionality for the following:
  * Rheostat for fan control
  * LED strip control
@@ -49,6 +52,8 @@ byte olive = 9;
 byte black = 10;
 byte orange = 11;
 
+byte currentColor = black;
+
 // Color array NO white OR black; length 10
 byte colors[] = {red, green, blue, magenta, yellow, 
                  cyan, purple, teal, olive, orange};
@@ -62,6 +67,7 @@ unsigned long lastUpdate = 0;
  */
 void initializeFans(int fanPin[])
 {
+  setPwmFrequency(10, 1);   // Change PWM frequency on pin 10 to roughly 31khz
   for(int i = 0; i < numFans; i++){ 
     pinMode(fanPin[i], OUTPUT);    
     writeToFans(fanPin[i], defaultFanSpeed);
@@ -163,6 +169,37 @@ void setColorIntensity(byte color, int intensity)
       }
 }
 
+void setPwmFrequency(int pin, int divisor) {
+  byte mode;
+  if(pin == 5 || pin == 6 || pin == 9 || pin == 10) {
+    switch(divisor) {
+      case 1: mode = 0x01; break;
+      case 8: mode = 0x02; break;
+      case 64: mode = 0x03; break;
+      case 256: mode = 0x04; break;
+      case 1024: mode = 0x05; break;
+      default: return;
+    }
+    if(pin == 5 || pin == 6) {
+      TCCR0B = TCCR0B & 0b11111000 | mode;
+    } else {
+      TCCR1B = TCCR1B & 0b11111000 | mode;
+    }
+  } else if(pin == 3 || pin == 11) {
+    switch(divisor) {
+      case 1: mode = 0x01; break;
+      case 8: mode = 0x02; break;
+      case 32: mode = 0x03; break;
+      case 64: mode = 0x04; break;
+      case 128: mode = 0x05; break;
+      case 256: mode = 0x06; break;
+      case 1024: mode = 0x07; break;
+      default: return;
+    }
+    TCCR2B = TCCR2B & 0b11111000 | mode;
+  }
+}
+
 void setup()
 {
   initializeFans(fanArray); // Get the fans going
@@ -171,6 +208,8 @@ void setup()
   
   strip.begin();      // Start and show the strip
   strip.show();
+
+  setColor(olive);   // Set color here so it's not being updated on every loop
 }
 
 void loop()
@@ -182,5 +221,4 @@ void loop()
         writeToFans(fanArray[i], getIntensity());
     }
   }
-  setColor(teal);
 }
