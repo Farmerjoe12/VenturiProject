@@ -67,10 +67,10 @@ unsigned long lastUpdate = 0;
  */
 void initializeFans(int fanPin[])
 {
-  setPwmFrequency(10, 1);   // Change PWM frequency on pin 10 to roughly 31khz
+  setPwmFrequency(10, 1);   // Change PWM frequency on pin 10 to roughly 31khz // @suppress("Invalid arguments")
   for(int i = 0; i < numFans; i++){ 
     pinMode(fanPin[i], OUTPUT);    
-    writeToFans(fanPin[i], defaultFanSpeed);
+    writeToFans(fanPin[i], defaultFanSpeed); // @suppress("Invalid arguments")
   }  
 }
 
@@ -98,7 +98,7 @@ double getIntensity()
  */
 void setColor(byte color)
 {
-  setColorIntensity(color, 255);
+  setColorIntensity(color, 255); // @suppress("Invalid arguments")
 }
 
 /** 
@@ -181,9 +181,9 @@ void setPwmFrequency(int pin, int divisor) {
       default: return;
     }
     if(pin == 5 || pin == 6) {
-      TCCR0B = TCCR0B & 0b11111000 | mode;
+      TCCR0B = (TCCR0B & 0b11111000) | mode;
     } else {
-      TCCR1B = TCCR1B & 0b11111000 | mode;
+      TCCR1B = (TCCR1B & 0b11111000) | mode;
     }
   } else if(pin == 3 || pin == 11) {
     switch(divisor) {
@@ -196,7 +196,7 @@ void setPwmFrequency(int pin, int divisor) {
       case 1024: mode = 0x07; break;
       default: return;
     }
-    TCCR2B = TCCR2B & 0b11111000 | mode;
+    TCCR2B = (TCCR2B & 0b11111000) | mode;
   }
 }
 
@@ -209,7 +209,7 @@ void setup()
   strip.begin();      // Start and show the strip
   strip.show();
 
-  setColor(olive);   // Set color here so it's not being updated on every loop
+  setColorIntensity(red, 125);   // Set color here so it's not being updated on every loop
 }
 
 void loop()
